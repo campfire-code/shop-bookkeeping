@@ -1,0 +1,21 @@
+# 小店记账 · 篝火出品（基于 mayswind/ezbookkeeping）
+# 启动：docker compose up -d，然后浏览器打开 http://服务器地址:8080
+services:
+  shop-bookkeeping:
+    image: ghcr.io/campfire-code/shop-bookkeeping:latest
+    container_name: shop-bookkeeping
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ebk-data:/ezbookkeeping/data        # 数据库（账本数据都在这里，务必保留并备份）
+      - ebk-storage:/ezbookkeeping/storage  # 上传的图片等附件
+      - ebk-log:/ezbookkeeping/log          # 运行日志
+
+volumes:
+  ebk-data:
+  ebk-storage:
+  ebk-log:

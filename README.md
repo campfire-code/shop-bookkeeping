@@ -1,3 +1,75 @@
+# 小店记账（ezBookkeeping）
+
+> 篝火出品 · 收录于篝火 App 应用区 · 基于开源项目 [mayswind/ezbookkeeping](https://github.com/mayswind/ezbookkeeping)（MIT）
+
+给小店用的自托管记账网站：记进货、货款、平台扣点等收支，搜索筛选账单，看图表报表。数据存在你自己的服务器上，手机和电脑用浏览器都能打开。
+
+## 部署（需要一台装好 Docker 的服务器或电脑）
+
+```bash
+mkdir shop-bookkeeping && cd shop-bookkeeping
+# 下载 Releases 里的 docker-compose.yml 和 .env.example
+cp .env.example .env     # 然后编辑 .env，至少把 EBK_SECURITY_SECRET_KEY 改成你自己的一长串随机字符
+docker compose up -d
+```
+
+然后浏览器打开 `http://服务器地址:8080`，先注册第一个账号。
+
+- 镜像：`ghcr.io/campfire-code/shop-bookkeeping:latest`，支持 x86 与 ARM。
+- 数据都在 Docker 卷 `ebk-data`（数据库）、`ebk-storage`（附件）、`ebk-log`（日志）里，**备份时备份这些卷**。不要用 `docker compose down -v`，那会删除全部账本。
+- 上游要求首次运行前设置 `secret_key`（用于登录签名），之后不要再改。
+- 自己注册好账号后，把 `.env` 里的 `EBK_USER_ENABLE_REGISTER` 改成 `false` 再 `docker compose up -d`，避免陌生人在你的服务器上注册。
+- 如果要放到公网，请自己加 HTTPS 反向代理，不要裸露 8080 端口。
+- 配置项也可以在 `.env` 里用 `EBK_<段名>_<项名>` 的形式覆盖，规则来自上游源码，可用项见上游 `conf/ezbookkeeping.ini`。
+
+## 界面语言
+
+上游自带简体中文（`src/locales/zh_Hans.json`）和繁体中文，界面是中文的；是否默认显示中文取决于浏览器语言，可以在设置里切换语言。
+
+## 小店常用收支分类（建议）
+
+本仓库没有改上游代码，下面只是推荐清单，请自己在软件里添加。
+
+| 类型 | 一级分类 | 可细分的二级分类 |
+|---|---|---|
+| 支出 | 进货成本 | 货款、样品 |
+| 支出 | 平台扣点 | 佣金、技术服务费、支付手续费 |
+| 支出 | 物流运费 | 快递费、退货运费 |
+| 支出 | 推广费用 | 平台推广、达人佣金 |
+| 支出 | 店铺经营 | 房租水电、包装耗材、员工工资 |
+| 收入 | 货款收入 | 线上店铺、线下门店 |
+| 收入 | 其他收入 | 平台补贴、赔付 |
+| 支出 | 退款 | 买家退款（也可以用收入的负向冲账，按自己习惯） |
+
+添加方式：
+
+- **手动添加**：进入"交易分类"页，新建一级分类，再在其下新建二级分类。上游界面里另有"添加默认分类"，是上游自带的通用预设，不是小店专用。
+- **导入时自动创建**：上游支持导入账单（CSV、Excel、OFX、QFX、QIF、IIF、Camt.052/053、MT940、GnuCash、Firefly III、Beancount 等；国内的支付宝、随手记类账单格式也有对应导入器，具体以导入窗口里列出的类型为准）。在"交易"页点"导入交易"，选择文件类型和文件，可勾选"创建不存在的支出分类 / 收入分类 / 转账分类"，导入文件里出现的新分类就会自动建出来。想一次建好上表分类，可以准备一个只有分类名的小 CSV，用自定义列映射导入后再删掉这几笔测试交易。
+- 上游没有"只导入分类清单"的功能入口，以上做法是借用交易导入，用前请先在测试账号试一遍。
+
+## 验收用例
+
+| 操作 | 应得到 |
+|---|---|
+| `docker compose up -d` 后访问 `http://服务器地址:8080/` | 返回 200，看到登录 / 注册页 |
+| 注册账号，进入"交易分类"，新建"进货成本"及二级分类 | 分类出现在列表中 |
+| 记一笔支出，分类选"进货成本" | 交易列表和统计图里出现这笔支出 |
+| `docker compose restart` 后重新登录 | 之前的账目还在（数据卷生效） |
+
+## 和上游的区别
+
+- 仅新增中文说明、`campfire/docker-compose.yml`、`campfire/.env.example` 和篝火发布流程（`tool.json`、`.github/workflows/release.yml`）。
+- 新增 `docker/Dockerfile.campfire`：与上游 Dockerfile 一致，只是构建时跳过 lint 和单元测试，减少内存占用；程序代码不变。
+- 移除了上游的构建发布工作流，这些依赖上游的密钥。
+
+## 归属与许可证
+
+本仓库由**篝火**整理发布，是篝火 App 应用区收录的开源工具之一。软件全部功能与版权归 [mayswind/ezbookkeeping](https://github.com/mayswind/ezbookkeeping) 原作者所有，按 MIT 许可证再分发。全部工具目录见 [toolkit-hub](https://github.com/campfire-code/toolkit-hub)。
+
+---
+
+以下为上游原始说明：
+
 # ezBookkeeping
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/mayswind/ezbookkeeping/blob/master/LICENSE)
 [![Latest Release](https://img.shields.io/github/release/mayswind/ezbookkeeping.svg?style=flat)](https://github.com/mayswind/ezbookkeeping/releases)
