@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>小店记账</title><style>
+*{box-sizing:border-box}body{margin:0;width:1040px;height:700px;background:#f4f5f7;font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;color:#1d2129;padding:36px}
+.card{background:#fff;border-radius:20px;height:628px;padding:40px 48px;box-shadow:0 2px 14px rgba(0,0,0,.06);position:relative;display:flex;flex-direction:column}
+.brand{position:absolute;right:32px;top:24px;font-size:13px;color:#8a919c}
+h1{margin:0 0 10px;font-size:36px;font-weight:700}
+.desc{font-size:16px;line-height:1.6;color:#4e5560;margin:0 0 18px}
+h2{font-size:15px;color:#ff6a1a;margin:0 0 10px;letter-spacing:1px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-bottom:18px}
+td,th{padding:7px 12px;border-bottom:1px solid #eef0f3;text-align:left}th{color:#8a919c;font-weight:500}
+.in{color:#1f9d55;font-weight:600}.out{color:#e5484d;font-weight:600}
+.cmd{background:#1f2430;color:#e6e9ef;border-radius:12px;padding:12px 18px;font:14px/1.6 "SF Mono",Menlo,monospace}
+.note{margin-top:auto;font-size:13px;color:#8a919c}
+</style><body><div class="card"><div class="brand">篝火出品</div><h1>小店记账</h1><p class="desc">自己服务器或 NAS 上部署的记账系统（基于 ezBookkeeping）：收支流水、分类统计、报表，支持导入账单。数据只在你自己的机器上。</p>
+<h2>推荐的小店收支分类</h2>
+<table><tr><th>类型</th><th>一级分类</th><th>二级分类示例</th></tr>
+<tr><td class="out">支出</td><td>进货成本</td><td>货款、样品</td></tr>
+<tr><td class="out">支出</td><td>平台扣点</td><td>佣金、技术服务费、支付手续费</td></tr>
+<tr><td class="out">支出</td><td>物流运费</td><td>快递费、退货运费</td></tr>
+<tr><td class="out">支出</td><td>推广费用</td><td>平台推广、达人佣金</td></tr>
+<tr><td class="in">收入</td><td>货款收入</td><td>线上店铺、线下门店</td></tr></table>
+<h2>部署</h2>
+<div class="cmd">cp .env.example .env　# 先设置 EBK_SECURITY_SECRET_KEY<br>docker compose up -d</div>
+<p class="note">示例分类，可按自己店铺习惯增删。</p></div></body></html>
