@@ -157,9 +157,9 @@ export default defineConfig(() => {
                 injectRegister: false,
                 manifestFilename: 'manifest.json',
                 manifest: {
-                    name: 'ezBookkeeping',
-                    short_name: 'ezBookkeeping',
-                    description: 'An open source, powerful, self-hosted personal finance app that is easy to use.',
+                    name: '小店记账',
+                    short_name: '小店记账',
+                    description: '开源、自托管的记账应用，基于 ezBookkeeping 修改。',
                     theme_color: '#C67E48',
                     background_color: '#F6F7F8',
                     start_url: './',
